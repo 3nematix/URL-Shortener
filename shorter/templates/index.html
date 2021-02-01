@@ -15,14 +15,15 @@
   </head>
   <body>
     {% load crispy_forms_tags %}
+    <form method="post" action='/'>{% csrf_token %}
     <div class="container-fluid mt-5">
       <div class="row justify-content-center">
         <div class="col-sm-8 col-md-8 col-lg-6 col-xl-5">
           {% if messages %} {% for message in messages %}
           {% if message.tags == 'success'%}
-          <div class="alert alert-success">🐱‍🏍 {{ message|safe }}. Check it out <a class="text-success font-weight-bold" href="{{url}}">here</a>.</div>
+          <div class="alert alert-success">🐱‍ &nbsp;{{ message|safe }}</div>
           {% elif message.tags == 'error'%}
-          <div class="alert alert-danger">❌ {{ message|safe }}</div>
+          <div class="alert alert-danger">❌ &nbsp;{{ message|safe }}</div>
           {%endif%}
           {% endfor %} {% endif %}
           <div class="card">
@@ -34,15 +35,16 @@
               <hr />
               <p>
                 <span class="text-success font-weight-bold">
-                  🔐 Protect your links</span
-                >
-                , you can add a Key which will be later used to access this
-                route.</br></br>
-                <span class="text-danger font-weight-bold">❌ Note:</span> Your link will be valid for <b>7 days</b>.
+                  🔐 &nbsp; Protect your links</span
+                >,
+                you can add a Key which will be later used to access this
+                route.</br>
+                <span class="text-danger font-weight-bold">❌ &nbsp; Note:</span> Your link will be valid for <b>7 days</b>.</br>
+                <span class="text-warning font-weight-bold">💁‍♂️ &nbsp; Limiting:</span> Only up to <b>20 people</b> can use this Link.
               </p>
-              {% if url %}
+              {% if url and '/info' in request.build_absolute_uri %}
               <div>
-                  ℹ Your <b>Shorten URL </b> details:</br></br>
+                  ℹ &nbsp; Your <b>Shorten URL </b> details:</br>
                   <b>Link</b>: <a class="text-dark" href="{{short_url}}">{{short_url}}</a></br>
                   <b>Expires</b>: {{url.date_expires}}</br>
                   <b>Views</b>: {{url.views}}
@@ -50,21 +52,24 @@
               {% endif %}
             </div>
             <div class="card-body">
+              {%if form%}
               <div class="form-wrapper">
-                <form method="post" action='/'>
                    {% if '/info' in request.build_absolute_uri %}
                    <h4>Create another URL.</h4>
                    {%endif%}
-                   {% csrf_token %} {{ form|crispy }}
-                   <button class="btn btn-success fon" type="submit">
+                   {{ form|crispy }}
+                   <button class="btn btn-success" type="submit">
                     ✔ Generate URL
                    </button>
-                </form>
               </div>
+              {%else%}
+              <a href='/'><button class="btn btn-danger" type="button">Back</button></a>
+              {%endif%}
             </div>
           </div>
         </div>
       </div>
     </div>
+  </form>
   </body>
 </html>
