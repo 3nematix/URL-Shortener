@@ -14,9 +14,7 @@ class Link(models.Model):
 
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-    date_expires = models.DateTimeField(
-        default=timezone.now() + timezone.timedelta(days=7)
-    )
+    date_expires = models.DateTimeField()
 
     def new_view(self):
         if self.views >= self.max_views - 1:
@@ -27,6 +25,9 @@ class Link(models.Model):
             self.save()
 
     def save(self, *args, **kwargs):
+        if not self.date_expires:
+            self.date_expires = timezone.now() + timezone.timedelta(days=7)
+
         if not self.short_url:
             while True:
                 try:
